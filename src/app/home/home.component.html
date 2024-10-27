@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tu Título</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="titleContainer">
+        <div class="titleTextContainer">
+          <img
+            class="titleImage"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/2560px-International_Pok%C3%A9mon_logo.svg.png"
+          />
+        </div>
+        <div class="input-group inputContainer">
+          <span class="input-group-text iconFilterContainer">
+            <i class="bi bi-filter iconFilter"></i>
+          </span>
+          <div class="form-floating inputInnerContainer">
+            <input
+              type="text"
+              class="form-control border border-primary inputFilter"
+              [(ngModel)]="pokemonName"
+              id="floatingInputGroup1"
+              placeholder="Filter"
+            />
+            <label for="floatingInputGroup1" class="inputLabel"
+              >Filter by pokemon name</label
+            >
+          </div>
+        </div>
+      </div>
+      <table class="table">
+        <thead>
+          <tr class="text-center">
+            <th scope="col" class="leftBorderHead">#</th>
+            <th scope="col" class="centerHead" sortable="name">
+              <div class="centerHeadInnerContainer">
+                <label class="labelCenterHeaderTable">Pokemon name</label>
+                <div class="nameHeaderContainer">
+                  <a
+                    type="button"
+                    (click)="sortDirectionAsc()"
+                    class="buttonSort"
+                    ><i class="bi bi-chevron-up iconSort"></i
+                  ></a>
+                  <a
+                    type="button"
+                    (click)="sortDirectionDesc()"
+                    class="buttonSort"
+                    ><i class="bi bi-chevron-down iconSort"></i
+                  ></a>
+                </div>
+              </div>
+            </th>
+            <th scope="col" class="rightBorderHead">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="clickable text-center"
+            *ngFor="
+              let i = index;
+              let item;
+              of: pokemons
+                | filter : pokemonName
+                | sort : [sortDirection]
+                | paginate : { itemsPerPage: itemsPerPage, currentPage: p }
+            "
+          >
+            <th class="numberColumn" scope="row">
+              {{ (p - 1) * itemsPerPage + i + 1 }}
+            </th>
+            <td>{{ item.name }}</td>
+            <td>
+              <a
+                href=""
+                (click)="showPokemon($event, item.name)"
+                id="{{ item.name }}"
+                data-bs-toggle="modal"
+                data-bs-target="#pokemonModal"
+              >
+                <i class="bi bi-eye-fill iconOpen"></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <pagination-controls
+        class="pagination"
+        [responsive]="true"
+        (pageChange)="p = $event"
+      ></pagination-controls>
+      <div
+        class="modal fade"
+        id="pokemonModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content modalContainer">
+            <div class="modal-body">
+              <!-- <button
+                type="button"
+                class="btn-close closeModalButton"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Back
+              </button> -->
+              <button
+                type="button"
+                class="btn btn-secondary closeModalButton"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Back
+              </button>
+
+              <div class="topMainContainer">
+                <div class="topContainer">
+                  <label class="cardTitle">{{ pokemonData.name }}</label>
+                </div>
+              </div>
+              <div class="upperContainerModal">
+                <div
+                  id="carouselExampleIndicators"
+                  class="carousel carousel-dark slide"
+                >
+                  <div class="carousel-inner innerCarouselContainer">
+                    <div
+                      class="carousel-item active itemCarousel"
+                      *ngIf="sprites.front_default != null"
+                    >
+                      <img
+                        src="{{ sprites.front_default }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.front_default }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.back_default != null"
+                    >
+                      <img
+                        src="{{ sprites.back_default }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.back_default }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.back_female != null"
+                    >
+                      <img
+                        src="{{ sprites.back_female }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.back_female }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.back_shiny != null"
+                    >
+                      <img
+                        src="{{ sprites.back_shiny }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.back_shiny }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.back_shiny_female != null"
+                    >
+                      <img
+                        src="{{ sprites.back_shiny_female }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.back_shiny_female }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.front_female != null"
+                    >
+                      <img
+                        src="{{ sprites.front_female }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.front_female }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.front_shiny != null"
+                    >
+                      <img
+                        src="{{ sprites.front_shiny }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.front_shiny }}</p>
+                    </div>
+                    <div
+                      class="carousel-item itemCarousel"
+                      *ngIf="sprites.front_shiny_female != null"
+                    >
+                      <img
+                        src="{{ sprites.front_shiny_female }}"
+                        class="d-block"
+                        alt="Loading..."
+                      />
+                      <p>{{ sprites.front_shiny_female }}</p>
+                    </div>
+                  </div>
+                  <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev"
+                  >
+                    <span
+                      class="carousel-control-prev-icon caruselBackButton"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next"
+                  >
+                    <span
+                      class="carousel-control-next-icon"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden caruselNextButton">Next</span>
+                  </button>
+                </div>
+                <div class="featuresContainer">
+                  <div class="featureContainer">
+                    <div class="column1Feature">
+                      <i class="bi bi-rulers iconExp"></i>
+                    </div>
+                    <div class="column2Feature">
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel">Height:</label>
+                      </div>
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel1"
+                          >{{ pokemonData.height }}m</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="featureContainer">
+                    <div class="column1Feature">
+                      <i class="bi bi-calendar2-minus-fill iconExp"></i>
+                    </div>
+                    <div class="column2Feature">
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel">Weight:</label>
+                      </div>
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel1"
+                          >{{ pokemonData.weight }}kg</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <div class="featureContainerExp">
+                    <div class="column1Feature">
+                      <i class="bi bi-lightbulb-fill iconExp iconExp"></i>
+                    </div>
+                    <div class="column2Feature">
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel">Exp:</label>
+                      </div>
+                      <div class="featureLabelContainer2">
+                        <label class="featuresLabel1">{{
+                          pokemonData.base_experience
+                        }}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <img class="portraitImage" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/2560px-International_Pok%C3%A9mon_logo.svg.png"> -->
+                <div *ngIf="pokemonData.name">
+                  <p>HP: {{ getStat("hp") }}</p>
+                  <p>Attack: {{ getStat("attack") }}</p>
+                  <p>Defense: {{ getStat("defense") }}</p>
+                </div>
+              </div>
+
+              <div class="middleContainerModal">
+                <label class="abilityTitleLabel">Abilities</label>
+                <div class="abilitiesContainer">
+                  <div
+                    class="abilityNameContainer"
+                    *ngFor="let item of pokemonAbilities"
+                  >
+                    <label class="abilityLabel">{{ item.ability.name }}</label>
+                  </div>
+                </div>
+                <h3 class="abilityTitleLabel">Types:</h3>
+                <ul class="abilitiesContainer">
+                  <li *ngFor="let type of types" class="abilityLabel">
+                    {{ type }}
+                  </li>
+                </ul>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
